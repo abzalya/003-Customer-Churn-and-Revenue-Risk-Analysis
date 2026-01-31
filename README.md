@@ -1,54 +1,78 @@
-# Layoffs Analysis: SQL → Excel → Power BI
+# Customer Churn & Revenue risk Analysis for a Subscription Business
 
-## Overview
-This project analyzes global company layoffs data to identify trends across time, industries, and regions. 
-The objective is to understand which sectors were most affected, how layoffs evolved over time, and what patterns emerge by company size and geography.
+## Overview/Statement
+This project analyzes customer churn for a subscription-based telecom company using Excel, SQL, Python, and Tableau. The objective is to identify key drivers of churn, predict which customers are most at risk of leaving, and quantify the revenue impact of churn. The analysis follows a case-interview-style approach, combining descriptive, diagnostic, predictive, and financial analysis to inform data-driven retention strategies.
+
+## Business Problem
+A subscription-based telecom company has observed rising customer churn. How can the company identify which customers are most at risk of churning, understand the drivers behind churn, and estimate the revenue impact of churn in order to prioritize retention efforts?”
+
+## Project Objective
+- Identify key drivers of customer churn
+- Segment customers based on churn risk and value
+- Predict customer churn using machine learning models
+- Quantify monthly revenue at risk due to churn
+- Communicate insights through an executive-style dashboard
+
 
 ## Tools Used
-- SQL: PostgreSQL
 - Excel: Microsoft Excel 365
-- Power BI: Power BI Desktop
+- SQL: PostgreSQL
+- Python: 
+- Tableau: 
 
 ## Data Source
-Dataset: Global Tech Layoffs Dataset  
+Dataset: Telco Customer Churn 
 Source: Public Kaggle dataset  
-Time period: 2020–2024  
+Date Accessed: 30/01/2026  
+
+The analysis uses the Telco Customer Churn dataset, which contains customer-level information including demographics, subscription details, service usage, billing information, and churn outcomes.
 
 Raw data is stored in data/raw/ and is not modified.
 
+The dataset was intentionally processed from its raw form to demonstrate data cleaning, preparation, and feature engineering across multiple tools.
+
 ## Project Structure
 - data/ → raw and processed datasets
-- sql/ → data cleaning and analysis scripts
-- excel/ → exploratory analysis workbook
-- powerbi/ → dashboard file
 - docs/ → documentation and methodology
+- excel/ → exploratory analysis, early hypothesis
+- sql/ → data cleaning and analysis scripts, transformation, and feature creation
+- python/ → ML and predictive analysis
+- tableau/ → dashboard and insight communication
+
+## Methodology (UPDATE)
+The project was completed end-to-end using the following steps:
+- Exploratory Analysis (Excel)
+    Initial data exploration and validation, churn rate analysis, and hypothesis generation.
+- Data Cleaning & Feature Engineering (SQL)
+    Data cleaning, transformation, creation of analytical features, and construction of analysis-ready views.
+- Predictive Modeling (Python)
+    Machine learning models were developed to predict customer churn and identify high-risk customer segments.
+- Visualization & Insights (Tableau)
+    An executive dashboard was created to highlight churn drivers, customer segmentation, and revenue at risk.
 
 ## How to Reproduce
 
-1. Load raw CSV files into SQL staging tables.
-2. Run SQL scripts in order:
-   - 00_create_tables.sql
-   - 01_cleaning.sql
-   - 02_analysis_views.sql
-3. Open excel/analysis.xlsx and refresh connections.
-4. Open powerbi/dashboard.pbix and refresh data.
+1. step by step write up to be done at a later stage
 
 ## Key Outputs
+- Excel workbook, pivot summaries and notes
 - Cleaned SQL tables
-- Reusable analysis views
+- Reusable and Documented analysis views
 - Excel pivot summaries
-- Interactive Power BI dashboard
+- Interactive/Executive Tableau dashboard
+- Actionable insights
 
-## Key Insights
-- Layoffs peaked during specific economic periods.
-- Technology and finance sectors were most affected.
-- Certain regions showed higher volatility than others.
+## Key Insights (UPDATE)
+- What is the overall churn rate and how does it vary by X?
+- What are the main drivers behind churn?
+- Can we predict churn rate?
+- How much revenue is at risk?
+- Data driver retention strategies and focus areas
 
-## Limitations
-- Dataset relies on public reporting.
-- Smaller companies may be underrepresented.
-- Some records contain incomplete location data.
+## Limitations (UPDATE)
+- The analysis is based on historical customer data and does not account for future changes in pricing, competition, or customer behavior.
+- Revenue calculations are estimated using available billing data and serve as proxies rather than exact financial forecasts.
 
 ## Author
-Bekzat Amirbay  
+Abzal Amirbay  
 2026
