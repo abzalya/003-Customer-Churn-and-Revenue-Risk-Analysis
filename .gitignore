@@ -4,11 +4,6 @@
 # Environment
 .env
 
-# Data files
-*.csv
-*.xlsx
-*.xls
-
 # Python
 __pycache__/
 *.pyc
@@ -18,3 +13,6 @@ __pycache__/
 
 # Logs
 *.log
+
+# Temporary files
+~$*.xlsx
