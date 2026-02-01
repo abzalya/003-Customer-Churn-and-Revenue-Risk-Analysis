@@ -37,24 +37,24 @@ from telco_raw;
 drop view if exists telco_stg cascade;
 create or replace view telco_stg as
 select 
-	customer_id,
-  	gender,
+	btrim(customer_id) as customer_id,
+  	btrim(gender) as gender,
   	senior_citizen,
   	case when partner = 'Yes' then 1 else 0 end as partner,
  	case when dependents = 'Yes' then 1 else 0 end as dependents,
   	tenure,
   	case when phone_service = 'Yes' then 1 else 0 end as phone_service,
   	case when multiple_lines = 'Yes' then 1 else 0 end as multiple_lines,
-  	internet_service,
+  	btrim(internet_service) as internet_service,
   	case when online_security = 'Yes' then 1 else 0 end as online_security,
   	case when online_backup = 'Yes' then 1 else 0 end as online_backup,
   	case when device_protection = 'Yes' then 1 else 0 end as device_protection,
   	case when tech_support = 'Yes' then 1 else 0 end as tech_support,
   	case when streaming_tv = 'Yes' then 1 else 0 end as streaming_tv,
   	case when streaming_movies = 'Yes' then 1 else 0 end as streaming_movies,
-  	contract,
+  	btrim(contract) as contract,
   	case when paperless_billing = 'Yes' then 1 else 0 end as paperless_billing,
-  	payment_method,
+  	btrim(payment_method) as payment_method,
   	monthly_charges,
   	nullif(btrim(total_charges), '')::numeric as total_charges,
   	case when churn = 'Yes' then 1 else 0 end as churn
@@ -108,24 +108,24 @@ where total_charges is null;
 drop view if exists telco_stg cascade;
 create or replace view telco_stg as
 select 
-	customer_id,
-  	gender,
+	btrim(customer_id) as customer_id,
+  	btrim(gender) as gender,
   	senior_citizen,
   	case when partner = 'Yes' then 1 else 0 end as partner,
  	case when dependents = 'Yes' then 1 else 0 end as dependents,
   	tenure,
   	case when phone_service = 'Yes' then 1 else 0 end as phone_service,
   	case when multiple_lines = 'Yes' then 1 else 0 end as multiple_lines,
-  	internet_service,
+  	btrim(internet_service) as internet_service,
   	case when online_security = 'Yes' then 1 else 0 end as online_security,
   	case when online_backup = 'Yes' then 1 else 0 end as online_backup,
   	case when device_protection = 'Yes' then 1 else 0 end as device_protection,
   	case when tech_support = 'Yes' then 1 else 0 end as tech_support,
   	case when streaming_tv = 'Yes' then 1 else 0 end as streaming_tv,
   	case when streaming_movies = 'Yes' then 1 else 0 end as streaming_movies,
-  	contract,
+  	btrim(contract) as contract,
   	case when paperless_billing = 'Yes' then 1 else 0 end as paperless_billing,
-  	payment_method,
+  	btrim(payment_method) as payment_method,
   	monthly_charges,
   	case when tenure = 0 then 0
   		else nullif(btrim(total_charges), '')::numeric end as total_charges, -- edited version to populate with 0 for customers with 0 tenure 
@@ -137,55 +137,79 @@ select total_charges
 from telco_stg
 where tenure = 0;
 
+--STEP 5: Extra quality checks
+--checking for duplicates
+select customer_id, count(*) as n
+from telco_stg
+group by 1
+having count(*) > 1;
+
+--consistency on text
+select internet_service, count(*) from telco_stg group by 1 order by 2 desc;
+select contract, count(*) from telco_stg group by 1 order by 2 desc;
+select payment_method, count(*) from telco_stg group by 1 order by 2 desc;
 
 
-
---recreating excel features
+--STEP 5: recreating excel features
+drop view if exists v_customer_features;
 create or replace view v_customer_features as
-select
-  *,
-  case when churn = 'Yes' then 1 else 0 end as churn_flag,
-
-  case
-    when tenure <= 6 then '0-6'
-    when tenure <= 12 then '7-12'
-    when tenure <= 24 then '13-24'
-    when tenure <= 48 then '25-48'
-    else '49+'
-  end as tenure_bucket,
-
-  case
-    when monthly_charges < 35 then 'low'
-    when monthly_charges <= 70 then 'mid'
-    else 'high'
-  end as charges_bucket,
-
-  case
-    when payment_method in ('Bank transfer (automatic)', 'Credit card (automatic)') then 1
-    else 0
-  end as autopay_flag,
-
-  case
-    when phone_service = 'Yes' and internet_service <> 'No' then 'phone+internet'
-    when phone_service = 'Yes' and internet_service = 'No' then 'phone_only'
-    when phone_service = 'No' and internet_service <> 'No' then 'internet_only'
-    else 'other'
-  end as bundle_type,
-
-  case
-    when partner = 'Yes' and dependents = 'Yes' then 'partner+dependents'
-    when partner = 'Yes' and dependents = 'No'  then 'partner_only'
-    when partner = 'No'  and dependents = 'Yes' then 'dependents_only'
-    else 'neither'
-  end as household_type,
-
-  (
-    (case when online_security   = 'Yes' then 1 else 0 end) +
-    (case when online_backup     = 'Yes' then 1 else 0 end) +
-    (case when device_protection = 'Yes' then 1 else 0 end) +
-    (case when tech_support      = 'Yes' then 1 else 0 end) +
-    (case when streaming_tv      = 'Yes' then 1 else 0 end) +
-    (case when streaming_movies  = 'Yes' then 1 else 0 end)
-  ) as service_count
-
+select *,
+  	case
+    	when tenure <= 6 then '0-6'
+    	when tenure <= 12 then '7-12'
+    	when tenure <= 24 then '13-24'
+    	when tenure <= 48 then '25-48'
+    	else '49+'
+  	end as tenure_bucket,
+  	case
+    	when monthly_charges < 35 then 'low'
+    	when monthly_charges <= 70 then 'mid'
+    	else 'high'
+  	end as charges_bucket,
+  	case
+    	when payment_method in ('Bank transfer (automatic)', 'Credit card (automatic)') then 1
+    	else 0
+  	end as autopay_flag,
+  	case
+    	when phone_service = 1 and not internet_service = 'No' then 'phone+internet'
+    	when phone_service = 1 and internet_service = 'No' then 'phone_only'
+    	when phone_service = 0 and not internet_service = 'No' then 'internet_only'
+    	else 'other'
+  	end as bundle_type,
+  	case
+    	when partner = 1 and dependents = 1 then 'partner+dependents'
+    	when partner = 1 and dependents = 0 then 'partner_only'
+    	when partner = 0 and dependents = 1 then 'dependents_only'
+    	else 'neither'
+  	end as household_type,
+  	(
+    	(case when online_security   = 1 then 1 else 0 end) +
+    	(case when online_backup     = 1 then 1 else 0 end) +
+    	(case when device_protection = 1 then 1 else 0 end) +
+    	(case when tech_support      = 1 then 1 else 0 end) +
+    	(case when streaming_tv      = 1 then 1 else 0 end) +
+    	(case when streaming_movies  = 1 then 1 else 0 end)
+  	) as service_count
 from telco_stg;
+
+--STEP 6: VIEWS
+drop view if exists v_kpis;
+create or replace view v_kpis as
+select
+  	count(*) as customers,
+  	round(avg(churn) * 100, 2) as churn_rate,
+  	round(avg(monthly_charges), 2) as avg_monthly_charges,
+  	round(avg(total_charges), 2) as avg_total_charges
+from telco_stg;
+
+--recreate an excel pivot to check the consistency
+select 
+	tenure_bucket,
+	count(*) as customers,
+	round(avg(churn) * 100, 2) as churn_rate
+from v_customer_features
+group by tenure_bucket
+order by churn_rate DESC;	
+
+--STEP 7: Export to csv for Python Phase 3
+--using TablePlus export feature

@@ -18,7 +18,7 @@ Summarizes hypotheses, key results from pivot analysis, and their business impli
 
 Key decisions and transformations include:
 - Column standardization
-All column names were renamed to lowercase and separated using underscores (e.g., SeniorCitizen → senior_citizen) to ensure consistency across Excel, SQL, Python, and Tableau and to avoid downstream issues.
+All column names were renamed to lowercase and separated using underscores (e.g., SeniorCitizen -> senior_citizen) to ensure consistency across Excel, SQL, Python, and Tableau and to avoid downstream issues.
 - Data type fixes
 total_charges was converted from text to numeric format.
 - Created new columns
